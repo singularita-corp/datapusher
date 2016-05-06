@@ -375,7 +375,7 @@ def push_to_datastore(task_id, input, dry_run=False):
 
     row_set.register_processor(messytables.headers_processor(headers))
     row_set.register_processor(messytables.offset_processor(offset + 1))
-    types = messytables.type_guess(row_set.sample, types=TYPES, strict=True)
+    types = messytables.type_guess(row_set, types=TYPES, strict=True)
     row_set.register_processor(messytables.types_processor(types))
 
     headers = [header.strip() for header in headers if header.strip()]
