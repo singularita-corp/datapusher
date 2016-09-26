@@ -32,17 +32,29 @@ else:
 MAX_CONTENT_LENGTH = web.app.config.get('MAX_CONTENT_LENGTH') or 10485760
 DOWNLOAD_TIMEOUT = 30
 
+
+class SaneDateType(messytables.types.DateUtilType):
+    def cast(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError('value not a basestring')
+
+        if value.strip() in ('', None):
+            raise ValueError('blank field not a timestamp')
+
+        return super(SaneDateType, self).cast(value)
+
+
 _TYPE_MAPPING = {
     'String': 'text',
     # 'int' may not be big enough,
     # and type detection may not realize it needs to be big
     'Integer': 'numeric',
     'Decimal': 'numeric',
-    'DateUtil': 'timestamp'
+    'SaneDate': 'timestamp',
 }
 
 _TYPES = [messytables.StringType, messytables.DecimalType,
-          messytables.IntegerType, messytables.DateUtilType]
+          messytables.IntegerType, SaneDateType]
 
 TYPE_MAPPING = web.app.config.get('TYPE_MAPPING', _TYPE_MAPPING)
 TYPES = web.app.config.get('TYPES', _TYPES)
